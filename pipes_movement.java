@@ -1,4 +1,12 @@
+PImage backgroundImage, pipe;
 
+void setup(){
+  size(1200, 800); 
+  backgroundImage = loadImage("images/background.png");
+  backgroundImage.resize(width, height);
+  pipe = loadImage("images/pipe.png");
+  noStroke();
+}
 
 
 int speed = 10, counter = 0, frameCountAtLastObject = 0, interval = 50;
@@ -30,4 +38,23 @@ void draw(){
         println(pipeS[i]);
     }
   }
+}
+
+void draw_pipe(int x, int y, float scaleX, float scaleY){
+  translate(x + pipe.width / 2, y + pipe.height / 2);
+   scale(scaleX, scaleY);
+   imageMode(CENTER);
+   image(pipe,0,0);
+   imageMode(CORNER);
+   resetMatrix();
+}
+
+void draw_pipe_inverse(int x, int y, float scaleX, float scaleY){
+  translate(x + pipe.width / 2, y + pipe.height / 2);
+  scale(scaleX, scaleY);
+  rotate(radians(180));
+  imageMode(CENTER);
+  image(pipe, 0, 0);
+  imageMode(CORNER);
+  resetMatrix();
 }
