@@ -104,7 +104,7 @@ void pipes() {
         //pipeW[i] = random(2,8);
         //pipeH[i] = random(2, 4);
         //println(pipeS[i]);
-        pipeScaleY[i] = floor(random(1.5));
+        pipeScaleY[i] = random(0.5, 1.5);
         //pipeScaleX[i] = floor(random(3));
     }
   }
