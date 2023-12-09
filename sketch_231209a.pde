@@ -5,7 +5,7 @@ PImage[] backgound2Frame = new PImage[5];
 // pipes
 PImage pipe;
 int speed, counter, frameCountAtLastObject, interval;
-int[] pipeX = { width, width + 200, width + 400, width + 600, width + 800, width + 1000 };
+int[] pipeX = { width, width + 1200, width + 1400, width + 1600, width + 1800, width + 2000 };
 int[] pipeS = { 1, 0, 1, 0, 1, 0 };
 
 // bird movement
@@ -45,7 +45,7 @@ void setup() {
 }
 
 void draw() {
-   drawBackground(2);
+  drawBackground(2);
   
   pipes();
   moveBird();
@@ -67,6 +67,8 @@ void moveBird() {
    birdY = 5;
    speedY = 0;
   }
+  
+  collision(3);
 }
 
 void drawBackground(int which) {
@@ -91,7 +93,7 @@ void pipes() {
       draw_pipe_inverse(pipeX[i], 0, 5, 3);
      else 
       draw_pipe(pipeX[i], height - pipe.height, 5, 3);
-      
+    
     pipeX[i]-= speed;
     
     if(pipeX[i] <  -75){
@@ -128,12 +130,21 @@ void collision(int scaleY) {
   int pipeH = 160 * scaleY;
   
     for(int i = 0; i < pipeX.length; ++i) {
-      if(birdX >= pipeX[i] &&
+      if(birdX + 15 >= pipeX[i] &&
          birdX <= pipeX[i] + pipeW &&
-         ((birdY <= pipeH && pipeS[i] == 0) || (birdY >= pipeH && pipeS[i] == 1))) {
+         ((birdY <= pipeH && pipeS[i] == 0) || (birdY >= height - pipeH && pipeS[i] == 1))) {
             dead = true;
+            break;
        }
     }
+    
+    if(dead) {
+      collisionEffect();
+    }
+}
+
+void collisionEffect() {
+  //speed = 0;
 }
 
 void mousePressed() {
