@@ -7,6 +7,8 @@ PImage pipe, pipe_inverse;
 int speed, counter, frameCountAtLastObject, interval;
 int[] pipeX = { 1000, 1200, 1400, 1600, 1800, 2000 };
 int[] pipeS = { 1, 0, 1, 0, 1, 0 };
+float[] pipeScaleY = { 1, 0.2, 0.5, 0.8, 1.2, 1.4};
+float[] pipeScaleX = { 1.5, 0.5, 2.8, 1.6, 1.2, 0.9};
 
 // bird movement
 PImage[] birdFrame = new PImage[4];
@@ -89,11 +91,10 @@ void drawBackground2() {
 
 void pipes() {
     for(int i=0;i<pipeX.length; i++){
-    
     if(pipeS[i] == 0)
-      draw_pipe(pipe_inverse, pipeX[i], 0, 3, 1);
+      draw_pipe(pipe_inverse, pipeX[i], 0,3, pipeScaleY[i]);
      else 
-      draw_pipe(pipe, pipeX[i], height - pipe.height * 1, 3, 1);
+      draw_pipe(pipe, pipeX[i],  height - pipe.height * pipeScaleY[i], 3,pipeScaleY[i]);
     
     pipeX[i]-= speed;
     
@@ -103,26 +104,29 @@ void pipes() {
         //pipeW[i] = random(2,8);
         //pipeH[i] = random(2, 4);
         //println(pipeS[i]);
+        pipeScaleY[i] = floor(random(1.5));
+        //pipeScaleX[i] = floor(random(3));
     }
   }
 }
 
-void draw_pipe(PImage pipe,int x, int y, float scaleX, float scaleY){
+void draw_pipe(PImage pipe,int x, float y, float scaleX, float scaleY){
+   pushMatrix();
    translate(x, y);
    scale(scaleX, scaleY);
    rectMode(CORNER);
    image(pipe,0,0);
-   resetMatrix();
+   popMatrix();
 }
 
 
 void collision(int scaleY) {
   int pipeW = pipe.width * 3;
-  int pipeH = pipe.height *1;
+  //int pipeH = pipe.height * 1;
     for(int i = 0; i < pipeX.length; ++i) {
       if(birdX + 15 >= pipeX[i] &&
-         birdX <= pipeX[i] + pipeW &&
-         ((birdY <= pipeH && pipeS[i] == 0) || (birdY >= height - pipeH && pipeS[i] == 1))) {
+         birdX <= pipeX[i] + pipeW  &&
+         ((birdY <= pipe.height * pipeScaleY[i] && pipeS[i] == 0) || (birdY >= height - pipe.height * pipeScaleY[i] && pipeS[i] == 1))) {
             dead = true;
             break;
        }
