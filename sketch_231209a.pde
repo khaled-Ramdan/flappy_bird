@@ -3,9 +3,9 @@ PImage backgroundImage1;
 PImage[] backgound2Frame = new PImage[5];
 
 // pipes
-PImage pipe;
+PImage pipe, pipe_inverse;
 int speed, counter, frameCountAtLastObject, interval;
-int[] pipeX = { width, width + 1200, width + 1400, width + 1600, width + 1800, width + 2000 };
+int[] pipeX = { 1000, 1200, 1400, 1600, 1800, 2000 };
 int[] pipeS = { 1, 0, 1, 0, 1, 0 };
 
 // bird movement
@@ -27,6 +27,7 @@ void setup() {
   
   // pipes
   pipe = loadImage("images/pipe.png");
+  pipe_inverse = loadImage("images/pipe-inverse.png");
   speed = 5; 
   counter = 0;
   frameCountAtLastObject = 0;
@@ -90,9 +91,9 @@ void pipes() {
     for(int i=0;i<pipeX.length; i++){
     
     if(pipeS[i] == 0)
-      draw_pipe_inverse(pipeX[i], 0, 5, 3);
+      draw_pipe(pipe_inverse, pipeX[i], 0, 3, 1);
      else 
-      draw_pipe(pipeX[i], height - pipe.height, 5, 3);
+      draw_pipe(pipe, pipeX[i], height - pipe.height * 1, 3, 1);
     
     pipeX[i]-= speed;
     
@@ -106,29 +107,18 @@ void pipes() {
   }
 }
 
-void draw_pipe(int x, int y, float scaleX, float scaleY){
-  translate(x + pipe.width / 2, y + pipe.height / 2);
+void draw_pipe(PImage pipe,int x, int y, float scaleX, float scaleY){
+   translate(x, y);
    scale(scaleX, scaleY);
-   imageMode(CENTER);
+   rectMode(CORNER);
    image(pipe,0,0);
-   imageMode(CORNER);
    resetMatrix();
 }
 
-void draw_pipe_inverse(int x, int y, float scaleX, float scaleY){
-  translate(x + pipe.width / 2, y + pipe.height / 2);
-  scale(scaleX, scaleY);
-  rotate(radians(180));
-  imageMode(CENTER);
-  image(pipe, 0, 0);
-  imageMode(CORNER);
-  resetMatrix();
-}
 
 void collision(int scaleY) {
-  int pipeW = 26 * 5;
-  int pipeH = 160 * scaleY;
-  
+  int pipeW = pipe.width * 3;
+  int pipeH = pipe.height *1;
     for(int i = 0; i < pipeX.length; ++i) {
       if(birdX + 15 >= pipeX[i] &&
          birdX <= pipeX[i] + pipeW &&
@@ -144,7 +134,9 @@ void collision(int scaleY) {
 }
 
 void collisionEffect() {
-  //speed = 0;
+  speed = 0;
+  speedY = 25;
+  
 }
 
 void mousePressed() {
