@@ -12,15 +12,14 @@ PImage sky, land1, land2;
 float xLand1, xLand2;
 int whichBackground;
 //mod
-int score=11111111;
+int score=0,level = 0;
 
 // pipes
 PImage pipe, pipe_inverse;
 int speed,speed2, counter, frameCountAtLastObject, interval;
-int[] pipeX = { 1000, 1200, 1400, 1600, 1800, 2000 };
+int[] pipeX = { 100, 100, 300, 300, 500, 500 };
 int[] pipeS = { 1, 0, 1, 0, 1, 0 };
-float[] pipeScaleY = { 1, 0.2, 0.5, 0.8, 1.2, 1.4};
-float[] pipeScaleX = { 1.5, 0.5, 2.8, 1.6, 1.2, 0.9};
+float[] pipeScaleY = { 1,1 , 0.5, 1.5, 0.3, 1.7}; // 4.4  => empty [1, 2.4] 
 
 // bird
 PImage[] birdFrame = new PImage[3];
@@ -35,6 +34,7 @@ float cnt = 0, f = 0;
 // get started
 PImage getReady, taptap;
 boolean started;
+
 
 void setup() {
   size(394, 700);
@@ -117,6 +117,7 @@ void draw() {
    }
     draw_score(width/2+35,40,score);
 moveBird(); 
+score_effect(score);
 }
   
    
@@ -212,12 +213,16 @@ void pipes() {
     
     if(pipeX[i] <  -75){
         pipeX[i] = width + 75;
-        //pipeS[i] = floor(random(2));
-        //pipeW[i] = random(2,8);
-        //pipeH[i] = random(2, 4);
-        //println(pipeS[i]);
-        pipeScaleY[i] = random(0.5, 1.5);
-        //pipeScaleX[i] = floor(random(3));
+        if(pipeS[i] == 1)
+          score++;
+         if(i % 2 == 0){
+          float empty_space = 2.4 - 0.48 * level;
+          float max_height = 4.4 - empty_space;
+          float up_pipe = random(0.5, max_height - 0.5);
+          float dowm_pipe = 4.4 - up_pipe - empty_space;
+          pipeScaleY[i] = up_pipe;
+          pipeScaleY[i+1] = dowm_pipe;
+      }
     }
   }
 }
