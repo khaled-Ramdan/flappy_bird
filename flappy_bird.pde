@@ -1,5 +1,5 @@
 // general 
-int where;
+int where; // 0 = start, 1 = play, 2 = info
 
 // info
 PFont flappyFont;
@@ -15,13 +15,17 @@ PImage[] numbers = new PImage[10];
 PImage sky, land1, land2;
 float xLand1, xLand2;
 int whichBackground;
-//mod
-int score=0,level = 0;
+
+//score
+int score=0,level = 0, bestScore = 0;
+
+// gameOver
+PImage gameOver, scoreBoard, restart, exit, New, silver_medal, gold_medal, platinum_medal;
 
 // pipes
 PImage pipe, pipe_inverse;
 int speed,speed2, counter, frameCountAtLastObject, interval;
-int[] pipeX = { 100, 100, 300, 300, 500, 500 };
+int[] pipeX = { 100 + 500,  500 + 100, 500 + 300, 500 +  300, 500 + 500, 500 + 500 };
 int[] pipeS = { 1, 0, 1, 0, 1, 0 };
 float[] pipeScaleY = { 1,1 , 0.5, 1.5, 0.3, 1.7}; // 4.4  => empty [1, 2.4] 
 
@@ -71,7 +75,6 @@ void setup() {
   // start 
   flappyBirdFont = loadImage("images/flappy.png");
   play = loadImage("images/start.png");
-  settings = loadImage("images/settings.png");
   pause=loadImage("images/pause.png");//////////////////////////
   continue_playing=loadImage("images/continue.png");
   // get started
@@ -94,7 +97,7 @@ void setup() {
   }
   for(int i=0;i<10;i++)
   {
-    numbers[i]=loadImage("images/" + i + ".png");
+    numbers[i]=loadImage("images/" + i + "s.png");
   }
   currentFrame = 0;
   birdX = width / 8;
@@ -103,6 +106,16 @@ void setup() {
   gravity = 0.5;
   dead = false;
   paused=false;
+  
+   // gameOver
+  gameOver = loadImage("images/gameover.png");
+  scoreBoard = loadImage("images/scoreboard.png");
+  restart = loadImage("images/restart.png");
+  exit = loadImage("images/exit.png");
+  New = loadImage("images/new.png");
+  platinum_medal = loadImage("images/platinum_medal.png");
+  silver_medal = loadImage("images/silver_medal.png");
+  gold_medal = loadImage("images/gold_medal.png");
 }
 
 void draw() {
@@ -123,16 +136,43 @@ void draw() {
    else {     
      image(continue_playing,10,10);
    }
-    draw_score(width/2+35,40,score);
-moveBird(); 
-score_effect(score);
-}
-else {
-  info();
-}
-  
+   draw_score(width/2+35,40,score);
+   moveBird(); 
+   score_effect(score);
+  }
+  else {
+    info();
+  } 
    
 }
+
+void init() {
+  xLand1 = 0;
+  xLand2 = width;
+  started = false;
+  speed = 2; 
+  speed2=speed;
+  counter = 0;
+  frameCountAtLastObject = 0;
+  interval = 50;
+  currentFrame = 0;
+  birdX = width / 8;
+  birdY = height / 2 - 25;
+  speedY = 0;
+  gravity = 0.5;
+  dead = false;
+  paused=false;
+  int f = 100;
+  for (int i = 0; i < 6; i += 2, f += 200) {
+     pipeX[i] = pipeX[i + 1] = f + 500;
+  }
+  cnt = 0;
+  f = 0;
+  bestScore = max(bestScore, score);   
+  level = 0;
+  score = 0;
+}
+
 void draw_score(int posx,int posy,int number){
   int num2=number,num3=0;
   int sz=0,sz2=0;
@@ -261,18 +301,24 @@ void collision(int scaleY) {
     }
     
     if(dead) {
-      collisionEffect();
+      gameOver();
     }
 }
 
-void collisionEffect() {
-  speed = 0;
-  speedY = 25;
-  
-}
-
 void mousePressed() {
-  if (where == 0) {
+  if (dead == true) {'
+    // restart
+    if (mouseX > width / 2 - 125 && mouseX < width / 2 - 125 + 102 && mouseY > height / 2 + 110 && mouseY < height / 2 + 110 + 39) {
+      where = 1;
+      init();
+    }
+    // exit
+    else if (mouseX > width / 2 + 17 && mouseX < width / 2 + 10 + 113 && mouseY > height / 2 + 110 && mouseY < height / 2 + 110 + 39) {
+       where = 0;
+       init();
+    }
+  }
+  else if (where == 0) {
     if (mouseX > width / 2 - 60 && mouseX < width / 2 + 50 && mouseY > height / 2 - 31 + 220 && mouseY < height / 2 + 5 + 220) {
        where = 1;
     }
@@ -304,7 +350,7 @@ void mousePressed() {
       speedY = -10;
     }
   }
-  else {
+   else {
     if (mouseX > width / 2 - 52 && mouseX < width / 2 + 52 && mouseY > height / 2 - 31 + 220 && mouseY < height / 2 + 5 + 220) {
       where = 0;
     }
@@ -314,10 +360,10 @@ void mousePressed() {
 void startGame() {
   image(flappyBirdFont, (width / 2 - 90) - 20, (height / 2 - 100 + cnt));
   image(birdFrame[currentFrame], (width / 2 + 100) - 20, (height / 2 - 93 + cnt));
-  if(frameCount % 7 == 0) {
+   if(frameCount % 7 == 0) {
     currentFrame = (currentFrame + 1) % birdFrame.length;
   }
-  float playButtonScale = 1, infoButtonScale = 1;
+   float playButtonScale = 1, infoButtonScale = 1;
   if (mouseX > width / 2 - 60 && mouseX < width / 2 + 50 && mouseY > height / 2 - 31 + 220 && mouseY < height / 2 + 5 + 220){
     playButtonScale = 1.05;  // Increase the scale when hovering
   } else {
@@ -334,6 +380,36 @@ void startGame() {
   if (f == 0)cnt += 0.4;
   else cnt -= 0.4;
   if (cnt >= 10 || cnt <= -10)f = 1 - f;
+}
+
+void gameOver() {
+  speed = 0;
+  speedY = 25;
+  
+  image(gameOver, width / 2 - 96, height / 2 - 200);
+  image(scoreBoard, width / 2 - 150, height / 2 - 100);
+  float  buttonScaleR = 1;
+  if (mouseX > width / 2 - 125 && mouseX < width / 2 - 125 + 102 && mouseY > height / 2 + 110 && mouseY < height / 2 + 110 + 39) {
+    buttonScaleR = 1.05;
+   }
+  image(restart, width / 2 - 125, height / 2 + 110, 104 * buttonScaleR, 39 * buttonScaleR);
+  float  buttonScaleE = 1;
+  if (mouseX > width / 2 + 17 && mouseX < width / 2 + 10 + 113 && mouseY > height / 2 + 110 && mouseY < height / 2 + 110 + 39) {
+    buttonScaleE = 1.05;
+   }
+  image(exit, width / 2 + 10, height / 2 + 110, 121 * buttonScaleE, 39 * buttonScaleE);
+  if (score > bestScore)image(New, width / 2 + 35, height / 2 - 20);
+  draw_score(width / 2 + 100, height / 2 - 37, score);
+  draw_score(width / 2 + 100, height / 2 + 20, max(bestScore, score));
+  if (score > 10 && score <= 20) {
+    image(platinum_medal, width / 2-114, height / 2 - 42);
+  }
+  else if (score > 20 && score <= 30) {
+    image(silver_medal, width / 2-114, height / 2 - 42);
+  }
+  else if (score > 30){
+    image(gold_medal, width / 2-114, height / 2 - 42);
+  }
 }
 
 void score_effect(int score){  
