@@ -1,6 +1,10 @@
 // general 
 int where;
 
+// info
+PFont flappyFont;
+PImage infoImage, ok;
+
 // backgrounds
 // 1
 PImage backgroundImage1;
@@ -42,6 +46,12 @@ void setup() {
   
   // general
   where = 0;
+  
+  // info
+  flappyFont = createFont("fonts/light_pixel-7.ttf", 20); 
+  textFont(flappyFont);
+  infoImage = loadImage("images/info.png");
+  ok = loadImage("images/ok.png");
   
   // backgrounds
   // 1
@@ -101,8 +111,6 @@ void draw() {
     startGame();
   }
   else if (where == 1) {
-
-   
       if (started == false) {
         getStarted();
       }
@@ -118,6 +126,9 @@ void draw() {
     draw_score(width/2+35,40,score);
 moveBird(); 
 score_effect(score);
+}
+else {
+  info();
 }
   
    
@@ -265,6 +276,9 @@ void mousePressed() {
     if (mouseX > width / 2 - 60 && mouseX < width / 2 + 50 && mouseY > height / 2 - 31 + 220 && mouseY < height / 2 + 5 + 220) {
        where = 1;
     }
+    else if(mouseX >= width - 70 && mouseY >= 10 && mouseY <= 70) {
+      where = 2;
+    }
   }
   else if (where == 1) {
     if(mouseX>=10&&mouseX<=67&&mouseY>=10&&mouseY<=70)
@@ -290,27 +304,37 @@ void mousePressed() {
       speedY = -10;
     }
   }
+  else {
+    if (mouseX > width / 2 - 52 && mouseX < width / 2 + 52 && mouseY > height / 2 - 31 + 220 && mouseY < height / 2 + 5 + 220) {
+      where = 0;
+    }
+  }
 }
 
 void startGame() {
   image(flappyBirdFont, (width / 2 - 90) - 20, (height / 2 - 100 + cnt));
   image(birdFrame[currentFrame], (width / 2 + 100) - 20, (height / 2 - 93 + cnt));
-   if(frameCount % 7 == 0) {
+  if(frameCount % 7 == 0) {
     currentFrame = (currentFrame + 1) % birdFrame.length;
   }
-  float  buttonScale = 1;
-  if (mouseX > width / 2 - 60 && mouseX < width / 2 + 50 && mouseY > height / 2 - 31 + 220 && mouseY < height / 2 + 5 + 220) {
-    buttonScale = 1.05;  // Increase the scale when hovering
+  float playButtonScale = 1, infoButtonScale = 1;
+  if (mouseX > width / 2 - 60 && mouseX < width / 2 + 50 && mouseY > height / 2 - 31 + 220 && mouseY < height / 2 + 5 + 220){
+    playButtonScale = 1.05;  // Increase the scale when hovering
   } else {
-    buttonScale = 1.0;  // Reset the scale when not hovering
+    playButtonScale = 1.0;  // Reset the scale when not hovering
   }
-  image(play, width / 2 - 52, height / 2 - 31 + 220, 104 * buttonScale, 36 * buttonScale);
+  image(play, width / 2 - 52, height / 2 - 31 + 220, 104 * playButtonScale, 36 * playButtonScale);
+  if (mouseX >= width - 70 && mouseY >= 10 && mouseY <= 70){
+    infoButtonScale = 1.05;  // Increase the scale when hovering
+  } else {
+    infoButtonScale = 1.0;  // Reset the scale when not hovering
+  }
+  image(infoImage, width - 70, 10, 60 * infoButtonScale, 60 * infoButtonScale);
   //image(settings, (width / 2 - 52) + 80 , (height / 2 - 31) + 200);
   if (f == 0)cnt += 0.4;
   else cnt -= 0.4;
   if (cnt >= 10 || cnt <= -10)f = 1 - f;
 }
-
 
 void score_effect(int score){  
       if(score >= 100){
@@ -329,6 +353,30 @@ void score_effect(int score){
         speed = 4;
         level = 1;
       }  
-      else speed = 2;
 
+}
+
+/*
+The objective is to guide the bird through a series of pipes without hitting them.
+Your goal is to score as many points as possible by successfully passing through the gaps between the pipes.
+*/
+
+void info() {
+  text("Flappy Bird", width / 2 - 75, 50);
+  text("The objective is to guide", 15, 110);
+  text("the bird through a series", 15, 150);
+  text("of pipes without hitting", 15, 190);
+  text("them.", 15, 230);
+  text("Your goal is to score as", 15, 290);
+  text("many points as possible by", 15, 330);
+  text("successfully passing through", 15, 370);
+  text("the gaps between the pipes.", 15, 410);
+  
+  float buttonScale = 1;
+  if (mouseX > width / 2 - 52 && mouseX < width / 2 + 52 && mouseY > height / 2 - 31 + 220 && mouseY < height / 2 + 5 + 220) {
+    buttonScale = 1.05;  // Increase the scale when hovering
+  } else {
+    buttonScale = 1.0;  // Reset the scale when not hovering
+  }
+  image(ok, width / 2 - 52, height / 2 - 31 + 220, 104 * buttonScale, 36 * buttonScale);
 }
