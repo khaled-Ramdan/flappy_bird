@@ -310,3 +310,25 @@ void startGame() {
   else cnt -= 0.4;
   if (cnt >= 10 || cnt <= -10)f = 1 - f;
 }
+
+
+void score_effect(int score){  
+      if(score >= 100){
+          speed = 10;
+          level = 4;
+      }
+      else if(score >= 50) {
+          speed = 8;
+          level = 3;
+      }
+      else if(score >= 30) {
+        speed = 6;
+        level = 2;
+      }
+      else if(score >= 10){
+        speed = 4;
+        level = 1;
+      }  
+      else speed = 2;
+
+}
