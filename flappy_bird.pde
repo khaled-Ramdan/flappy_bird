@@ -51,16 +51,13 @@ void setup() {
   
   // general
   where = 0;
-<<<<<<< HEAD
   for(int i = 0; i < 10; i++) {
     numbers[i]=loadImage("images/" + i + ".png");
   }
   for(int i = 0; i < 10; i++) {
     numbers_s[i]=loadImage("images/" + i + "s.png");
   }
-=======
->>>>>>> 25f2ba499071426a30cddb0360c635de942c730a
-  
+
   // info
   flappyFont = createFont("fonts/light_pixel-7.ttf", 20); 
   textFont(flappyFont);
