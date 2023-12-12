@@ -315,7 +315,7 @@ void collision(int scaleY) {
 }
 
 void mousePressed() {
-  if (dead == true) {'
+  if (dead == true) {
     // restart
     if (mouseX > width / 2 - 125 && mouseX < width / 2 - 125 + 102 && mouseY > height / 2 + 110 && mouseY < height / 2 + 110 + 39) {
       where = 1;
