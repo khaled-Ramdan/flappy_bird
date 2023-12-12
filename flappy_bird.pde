@@ -51,7 +51,7 @@ void setup() {
   noStroke();
   
   // general
-  where = 1;
+  where = 0;
   
   // info
   flappyFont = createFont("fonts/light_pixel-7.ttf", 20); 
