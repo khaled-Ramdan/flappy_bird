@@ -11,6 +11,8 @@ PImage backgroundImage1;
 // 2
 PImage[] backgound2Frame = new PImage[5];
 PImage[] numbers = new PImage[10];
+PImage[] numbers_s = new PImage[10];
+
 // 3
 PImage sky, land1, land2;
 float xLand1, xLand2;
@@ -49,7 +51,7 @@ void setup() {
   noStroke();
   
   // general
-  where = 0;
+  where = 1;
   
   // info
   flappyFont = createFont("fonts/light_pixel-7.ttf", 20); 
@@ -97,7 +99,11 @@ void setup() {
   }
   for(int i=0;i<10;i++)
   {
-    numbers[i]=loadImage("images/" + i + "s.png");
+    numbers[i]=loadImage("images/" + i + ".png");
+  }
+  for(int i=0;i<10;i++)
+  {
+    numbers_s[i]=loadImage("images/" + i + "s.png");
   }
   currentFrame = 0;
   birdX = width / 8;
@@ -131,14 +137,14 @@ void draw() {
         pipes();
       }
       if(paused==false){
-    image(pause, 10, 10);
+    image(pause, 20, 20);
     }
    else {     
-     image(continue_playing,10,10);
+     image(continue_playing,20,20);
    }
-   draw_score(width/2+35,40,score);
+   draw_score(width/2,80,score, true);
    moveBird(); 
-   score_effect(score);
+   if (dead == false)score_effect(score);
   }
   else {
     info();
@@ -173,7 +179,7 @@ void init() {
   score = 0;
 }
 
-void draw_score(int posx,int posy,int number){
+void draw_score(int posx,int posy,int number, boolean sOb){
   int num2=number,num3=0;
   int sz=0,sz2=0;
   while(num2>0)
@@ -194,12 +200,14 @@ void draw_score(int posx,int posy,int number){
   }
   while(sz2>0)
   {
-    image(numbers[num3%10],sposx,posy-18);
+    if (sOb == true)image(numbers[num3%10],sposx,posy-18);
+    else image(numbers_s[num3%10],sposx,posy-18);
     sposx+=25;
     sz2--;
     num3/=10;
   }
 }
+
 void getStarted() {
    image(getReady, width / 2 - 100, height / 2 - 100);
    image(taptap, width / 2 - 65, height / 2 - 25);
@@ -256,9 +264,9 @@ void drawBackground3() {
 void pipes() {
     for(int i=0;i<pipeX.length; i++){
     if(pipeS[i] == 0)
-      draw_pipe(pipe_inverse, pipeX[i], 0,3, pipeScaleY[i]);
+      draw_pipe(pipe_inverse, pipeX[i], 0,3, pipeScaleY[i], false);
      else 
-      draw_pipe(pipe, pipeX[i],  height - pipe.height * pipeScaleY[i], 3,pipeScaleY[i]);
+      draw_pipe(pipe, pipeX[i],  height - pipe.height * pipeScaleY[i], 3,pipeScaleY[i], true);
     
     pipeX[i]-= speed;
     
@@ -267,7 +275,7 @@ void pipes() {
         if(pipeS[i] == 1)
           score++;
          if(i % 2 == 0){
-          float empty_space = 2.4 - 0.48 * level;
+          float empty_space = max(2.4 - 0.48 * level, 2.4 - 0.48 * 3);
           float max_height = 4.4 - empty_space;
           float up_pipe = random(0.5, max_height - 0.5);
           float dowm_pipe = 4.4 - up_pipe - empty_space;
@@ -278,15 +286,15 @@ void pipes() {
   }
 }
 
-void draw_pipe(PImage pipe,int x, float y, float scaleX, float scaleY){
+void draw_pipe(PImage pipe,int x, float y, float scaleX, float scaleY, boolean uOd){
    pushMatrix();
-   translate(x, y);
+   if (uOd == false)translate(x, y);
+   else translate(x, y - 75);
    scale(scaleX, scaleY);
    rectMode(CORNER);
    image(pipe,0,0);
    popMatrix();
 }
-
 
 void collision(int scaleY) {
   int pipeW = pipe.width * 3;
@@ -294,7 +302,8 @@ void collision(int scaleY) {
     for(int i = 0; i < pipeX.length; ++i) {
       if(birdX + 15 >= pipeX[i] &&
          birdX <= pipeX[i] + pipeW  &&
-         ((birdY <= pipe.height * pipeScaleY[i] && pipeS[i] == 0) || (birdY >= height - pipe.height * pipeScaleY[i] && pipeS[i] == 1))) {
+         ((birdY <= pipe.height * pipeScaleY[i] && pipeS[i] == 0) || (birdY >= height - pipe.height * pipeScaleY[i] && pipeS[i] == 1))
+           || (birdY >= height - 75)) {
             dead = true;
             break;
        }
@@ -399,8 +408,8 @@ void gameOver() {
    }
   image(exit, width / 2 + 10, height / 2 + 110, 121 * buttonScaleE, 39 * buttonScaleE);
   if (score > bestScore)image(New, width / 2 + 35, height / 2 - 20);
-  draw_score(width / 2 + 100, height / 2 - 37, score);
-  draw_score(width / 2 + 100, height / 2 + 20, max(bestScore, score));
+  draw_score(width / 2 + 100, height / 2 - 37, score, false);
+  draw_score(width / 2 + 100, height / 2 + 20, max(bestScore, score), false);
   if (score > 10 && score <= 20) {
     image(platinum_medal, width / 2-114, height / 2 - 42);
   }
@@ -429,7 +438,6 @@ void score_effect(int score){
         speed = 4;
         level = 1;
       }  
-
 }
 
 /*
