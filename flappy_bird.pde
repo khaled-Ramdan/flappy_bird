@@ -28,6 +28,7 @@ PImage pipe, pipe_inverse;
 int speed, speed2, counter, frameCountAtLastObject, interval;
 int[] pipeX = { 100 + 500,  500 + 100, 500 + 300, 500 +  300, 500 + 500, 500 + 500 };
 int[] pipeS = { 1, 0, 1, 0, 1, 0 };
+int[] is_counted = {0,0,0,0,0,0};
 float[] pipeScaleY = { 1,1 , 0.5, 1.5, 0.3, 1.7 }; // 4.4  => empty [1, 2.4] 
 
 // bird
@@ -290,9 +291,13 @@ void pipes() {
         
     pipeX[i] -= speed;
     
+    if(i%2 == 0 && pipeX[i] <= 5 && is_counted[i] == 0){
+        score++;
+        is_counted[i] = 1;
+    }
+    
     if(pipeX[i] < -75) {
         pipeX[i] = width + 75;
-        if(pipeS[i] == 1) score++;
         if(i % 2 == 0) {
           float empty_space = max(2.4 - 0.48 * level, 2.4 - 0.48 * 3);
           float max_height = 4.4 - empty_space;
@@ -300,6 +305,7 @@ void pipes() {
           float dowm_pipe = 4.4 - up_pipe - empty_space;
           pipeScaleY[i] = up_pipe;
           pipeScaleY[i + 1] = dowm_pipe;
+          is_counted[i] = 0;
       }
     }
   }
