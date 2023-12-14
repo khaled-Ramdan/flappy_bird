@@ -1,3 +1,5 @@
+import ddf.minim.*;
+
 // general 
 int where; // 0 = start, 1 = play, 2 = info
 PImage[] numbers = new PImage[10];
@@ -35,8 +37,8 @@ float[] pipeScaleY = { 1,1 , 0.5, 1.5, 0.3, 1.7 }; // 4.4  => empty [1, 2.4]
 PImage[] birdFrame = new PImage[3];
 PImage pause, continue_playing;
 float birdX, birdY, speedY, gravity, speedY2;
-int currentFrame;
-boolean dead, paused;
+int currentFrame, rotationAngle = 0, reminder = 0;
+boolean dead, paused, hit;
 
 // start
 PImage flappyBirdFont, play;
@@ -46,9 +48,23 @@ float cnt, f;
 PImage getReady, taptap;
 boolean started;
 
+// sound
+boolean deadWithMusic = false;
+Minim minim;
+AudioPlayer [] sound = new AudioPlayer[5]; // 0 = die, 1 = hit, 2 = point, 3 = swooshing, 4 = wing
+
+
 void setup() {
   size(394, 700);
   noStroke();
+  
+  // music
+  minim = new Minim(this);
+  sound[0] = minim.loadFile("audio/die.wav");
+  sound[1] = minim.loadFile("audio/hit.wav");
+  sound[2] = minim.loadFile("audio/point.wav");
+  sound[3] = minim.loadFile("audio/swooshing.wav");
+  sound[4] = minim.loadFile("audio/wing.wav");
   
   // general
   where = 0;
@@ -121,6 +137,11 @@ void setup() {
   gravity = 0.5;
   dead = false;
   paused = false;
+  hit = false;
+  deadWithMusic = false;
+  rotationAngle = 0;
+  reminder = 0;
+  
   
   // gameOver
   gameOver = loadImage("images/gameover.png");
@@ -194,6 +215,10 @@ void init() {
   bestScore = max(bestScore, score);   
   level = 0;
   score = 0;
+  deadWithMusic = false;
+  rotationAngle = 0;
+  reminder = 0;
+  hit = false;
 }
 
 void draw_score(int posx, int posy, int number, boolean sOb){
@@ -238,22 +263,33 @@ void moveBird() {
     currentFrame = (currentFrame + 1) % birdFrame.length; 
   } 
   
-  if(dead == false) {
-    image(birdFrame[currentFrame], birdX, birdY); 
+  draw_bird();
+  
+  if (reminder > 0) {
+    rotationAngle = max(-60, rotationAngle - 15);
+    reminder--;
+  }
+  else if (started) {
+    rotationAngle = min(rotationAngle + 4, 90);
   }
   
   birdY += speedY;
   speedY += gravity;
 
-  if(birdY >= height - 50) {
-    speedY = -5; 
-  }
   if(birdY < 0) {
    birdY = 5;
    speedY = 0;
   }
   
   collision(3);
+}
+
+void draw_bird() {
+  pushMatrix();
+  translate(birdX, min(birdY, height - 75 - 17));
+  rotate(radians(rotationAngle));
+  image(birdFrame[currentFrame], -17, -12); 
+  popMatrix();
 }
 
 void drawBackground(int which) {
@@ -293,6 +329,7 @@ void pipes() {
     
     if(i%2 == 0 && pipeX[i] <= 5 && is_counted[i] == 0){
         score++;
+        play_sound(2);
         is_counted[i] = 1;
     }
     
@@ -326,6 +363,7 @@ void collision(int scaleX) {
   
   if(birdY >= height - 75) {
     dead = true;
+    hit = false;
   }
   
   for(int i = 0; i < pipeX.length; ++i) {
@@ -333,11 +371,18 @@ void collision(int scaleX) {
        birdX <= pipeX[i] + pipeW  &&
        ((birdY <= pipe.height * pipeScaleY[i] && pipeS[i] == 0) || (birdY >= height - pipe.height * pipeScaleY[i] && pipeS[i] == 1))) {
           dead = true;
+          hit = true;
           break;
      }
   }
     
   if(dead) {
+    if (deadWithMusic == false){
+      play_sound(1);
+      if(hit) play_sound(0);
+      else play_sound(3);
+    }
+    deadWithMusic = true;
     gameOver();
   }
 }
@@ -347,25 +392,30 @@ void mousePressed() {
     // restart
     if (mouseX > width / 2 - 125 && mouseX < width / 2 - 125 + 102 && mouseY > height / 2 + 110 && mouseY < height / 2 + 110 + 39) {
       where = 1;
+      play_sound(3);
       init();
     }
     // exit
     else if (mouseX > width / 2 + 17 && mouseX < width / 2 + 10 + 113 && mouseY > height / 2 + 110 && mouseY < height / 2 + 110 + 39) {
       where = 0;
+      play_sound(3);
       init();
     }
   }
   else if (where == 0) {
     if (mouseX > width / 2 - 60 && mouseX < width / 2 + 50 && mouseY > height / 2 - 31 + 220 && mouseY < height / 2 + 5 + 220) {
       where = 1;
+      play_sound(3);
     }
     else if(mouseX >= width - 70 && mouseY >= 10 && mouseY <= 70) {
       where = 2;
+      play_sound(3);
     }
   }
   else if (where == 1) {
     if(mouseX >= 20 && mouseX <= 60 && mouseY >= 20 && mouseY <= 60) {
       paused = !paused;
+      play_sound(3);
       
       if(paused) {
         gravity = 0;
@@ -384,21 +434,26 @@ void mousePressed() {
       if (started == false) {
         started = true;
       }
-      speedY = -10;
+      speedY = -7;
+      play_sound(4);
+      reminder += 9; 
     }
   }
   else if (where < 4) {
     if (mouseX >= width - 90 && mouseY >= height - 85 - 80 && mouseY <= height - 85){ 
       where++;
+      play_sound(3);
     }
     else if (mouseX >= 10 && mouseX <= 90 && mouseY >= height - 85 - 80 && mouseY <= height - 85){
       if(where == 2) where = 0;
       else where = 2;
+      play_sound(3);
     }
   }
   else {
     if (mouseX > width / 2 - 52 && mouseX < width / 2 + 52 && mouseY > height / 2 - 31 + 220 && mouseY < height / 2 + 5 + 220) {
       where = 0;
+      play_sound(3);
     }
   }
 }
@@ -429,9 +484,7 @@ void startGame() {
 
 void gameOver() {
   speed = 0;
-  speedY = 0;
-  
-  image(deadBird, birdX + 17, height - 75 - 34);
+  speedY = 15;
   
   image(gameOver, width / 2 - 96, height / 2 - 200);
   image(scoreBoard, width / 2 - 150, height / 2 - 100);
@@ -476,6 +529,11 @@ void score_effect(int score){
     speed = 4;
     level = 1;
   }  
+}
+
+void play_sound(int which) {
+  sound[which].rewind(); 
+  sound[which].play();
 }
 
 /*
