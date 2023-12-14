@@ -9,6 +9,7 @@ PImage[] numbers_s = new PImage[10];
 PFont flappyFont;
 PImage infoImage, ok, next, previous;
 
+
 // backgrounds
 // 1
 PImage backgroundImage1;
@@ -52,7 +53,6 @@ boolean started;
 boolean deadWithMusic = false;
 Minim minim;
 AudioPlayer [] sound = new AudioPlayer[5]; // 0 = die, 1 = hit, 2 = point, 3 = swooshing, 4 = wing
-
 
 void setup() {
   size(394, 700);
@@ -262,7 +262,7 @@ void moveBird() {
   if(frameCount % 4 == 0 && paused == false && dead == false) {
     currentFrame = (currentFrame + 1) % birdFrame.length; 
   } 
-  
+
   draw_bird();
   
   if (reminder > 0) {
@@ -416,7 +416,7 @@ void mousePressed() {
     if(mouseX >= 20 && mouseX <= 60 && mouseY >= 20 && mouseY <= 60) {
       paused = !paused;
       play_sound(3);
-      
+
       if(paused) {
         gravity = 0;
         speedY2 = speedY;
