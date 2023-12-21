@@ -460,7 +460,7 @@ void mousePressed() {
     }
   }
   else {
-    if (mouseX > width / 2 - 52 && mouseX < width / 2 + 57 && mouseY > height / 2 + 190 && mouseY < height / 2 + 37.5 + 190) {
+    if (mouseX > width / 2 - 52 && mouseX < width / 2 + 52 && mouseY > height / 2 + 190 && mouseY < height / 2 + 36 + 190) {
       where = 0;
       play_sound(3);
       
@@ -494,7 +494,7 @@ void startGame() {
 
 void gameOver() {
   speed = 0;
-  speedY = 15;
+  speedY = 7;
   
   image(gameOver, width / 2 - 110, height / 2 - 200);
   image(scoreBoard, width / 2 - 185, height / 2 - 100);
