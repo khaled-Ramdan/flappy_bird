@@ -294,7 +294,6 @@ void drawBackground() {
   if (xLand2 <= -width)xLand2 = width;
 }
 
-///................dfmsgpmosfvfb,fpv,fvwf 3333..................
 void pipes() {
   for(int i = 0; i < pipeX.length; i++){
     if(pipeS[i] == 0)
