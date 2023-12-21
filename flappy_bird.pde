@@ -11,17 +11,11 @@ PImage infoImage, ok, next, previous;
 
 
 // backgrounds
-// 1
-PImage backgroundImage1;
-// 2
-PImage[] backgound2Frame = new PImage[5];
-// 3
 PImage sky, land1, land2;
 float xLand1, xLand2;
-int whichBackground;
 
 // score
-int score = 20, level, bestScore = 20;
+int score, level, bestScore;
 
 // gameOver
 PImage gameOver, scoreBoard, restart, exit, New, silver_medal, gold_medal, platinum_medal, deadBird;
@@ -84,15 +78,6 @@ void setup() {
   previous = loadImage("images/previous.png");
   
   // backgrounds
-  whichBackground = 3;
-  // 1
- // backgroundImage1 = loadImage("images/background.png");
-//  backgroundImage1.resize(width, height);
-  // 2
-  for(int i = 0; i < backgound2Frame.length; ++i) {
-    backgound2Frame[i] = loadImage("images/layer_" + i + ".png");
-  }
-  // 3
   sky = loadImage("images/sky.png");
   land1 = loadImage("images/land.png");
   land2 = loadImage("images/land.png");
@@ -152,11 +137,10 @@ void setup() {
   platinum_medal = loadImage("images/platinum_medal.png");
   silver_medal = loadImage("images/silver_medal.png");
   gold_medal = loadImage("images/gold_medal.png");
-  deadBird = loadImage("images/deadBird.png");
 }
 
 void draw() {
-  drawBackground(whichBackground);
+  drawBackground();
  
   if (where == 0) {
     startGame();
@@ -300,24 +284,8 @@ void draw_bird() {
   popMatrix();
 }
 
-void drawBackground(int which) {
-   if (which == 1)drawBackground1();
-   else if (which == 2) drawBackground2();
-   else drawBackground3();
-}
-
-void drawBackground1() {
-  image(backgroundImage1, 0, 0);
-}
-
-void drawBackground2() {
-  for(int i = 0; i < backgound2Frame.length; ++i) {
-    image(backgound2Frame[i], 0, 0);
-  }
-}
-
-void drawBackground3() {
-  image(sky, 0, 0);
+void drawBackground() {
+   image(sky, 0, 0);
   image(land1, xLand1, height - 75);
   image(land2, xLand2, height - 75);
   xLand1 -= speed;
@@ -325,6 +293,7 @@ void drawBackground3() {
   if (xLand1 <= -width)xLand1 = width;
   if (xLand2 <= -width)xLand2 = width;
 }
+
 ///................dfmsgpmosfvfb,fpv,fvwf 3333..................
 void pipes() {
   for(int i = 0; i < pipeX.length; i++){
