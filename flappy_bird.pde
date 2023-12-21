@@ -86,8 +86,8 @@ void setup() {
   // backgrounds
   whichBackground = 3;
   // 1
-  backgroundImage1 = loadImage("images/background.png");
-  backgroundImage1.resize(width, height);
+ // backgroundImage1 = loadImage("images/background.png");
+//  backgroundImage1.resize(width, height);
   // 2
   for(int i = 0; i < backgound2Frame.length; ++i) {
     backgound2Frame[i] = loadImage("images/layer_" + i + ".png");
@@ -460,9 +460,10 @@ void mousePressed() {
     }
   }
   else {
-    if (mouseX > width / 2 - 52 && mouseX < width / 2 + 52 && mouseY > height / 2 - 31 + 190 && mouseY < height / 2 + 5 + 190) {
+    if (mouseX > width / 2 - 52 && mouseX < width / 2 + 57 && mouseY > height / 2 + 190 && mouseY < height / 2 + 37.5 + 190) {
       where = 0;
       play_sound(3);
+      
     }
   }
 }
@@ -572,14 +573,14 @@ void info() {
 }
 
 void info_1() {
-  text("The objective is to guide", 15, 110);
-  text("the bird through a series", 15, 150);
-  text("of pipes without hitting", 15, 190);
-  text("them.", 15, 230);
-  text("Your goal is to score as", 15, 290);
-  text("many points as possible by", 15, 330);
-  text("successfully passing through", 15, 370);
-  text("the gaps between the pipes.", 15, 410);
+  text("The objective is to guide", 170, 150);
+  text("the bird through a series", 170, 190);
+  text("of pipes without hitting them.", 170, 230);
+
+  text("Your goal is to score as", 170, 300);
+  text("many points as possible by", 170, 340);
+  text("successfully passing through", 170, 380);
+  text("the gaps between the pipes.", 170, 420);
   
   float nextButtonScale = 1, prevButtonScale = 1; 
   if (mouseX >= width - 90 && mouseY >= height - 85 - 80 && mouseY <= height - 85){
@@ -593,14 +594,14 @@ void info_1() {
 }
 
 void info_2() {
-  text("For each pipe you", 15, 110);
-  text("successfully pass through", 15, 150);
-  text("without colliding, you earn", 15, 190);
-  text("one point.", 15, 230);
-  text("The score is usually", 15, 290);
-  text("displayed on the screen,", 15, 330);
-  text("indicating the number of", 15, 370);
-  text("pipes you've passed.", 15, 410);
+  text("For each pipe you", 170, 150);
+  text("successfully pass through", 170, 190);
+  text("without colliding, you earn ", 170, 230);
+  text("one point.", 170, 270);
+  text("The score is usually", 170, 340);
+  text("displayed on the screen,", 170, 380);
+  text("indicating the number of", 170, 420);
+  text("pipes you've passed.", 170, 460);
   
   float nextButtonScale = 1, prevButtonScale = 1; 
   if (mouseX >= width - 90 && mouseY >= height - 85 - 80 && mouseY <= height - 85){
@@ -614,14 +615,14 @@ void info_2() {
 }
 
 void info_3() {
-  text("When the score increases,", 15, 110); 
-  text("pipes speed increases:", 15, 150); 
-  text("If you earned > 10 points,", 15, 210);
-  text("you get a platinum medal.", 15, 250);
-  text("If you earned > 20 points,", 15, 290);
-  text("you get a silver medal.", 15, 330);
-  text("If you earned > 30 points,", 15, 370);
-  text("you get a gold medal.", 15, 410);
+  text("When the score increases,", 170, 150); 
+  text("pipes speed increases:", 170, 190); 
+  text("If you earned > 10 points,", 170, 230);
+  text("you get a platinum medal.", 170, 270);
+  text("If you earned > 20 points,", 170, 310);
+  text("you get a silver medal.", 170, 350);
+  text("If you earned > 30 points,", 170, 390);
+  text("you get a gold medal.", 170, 430);
   
   float buttonScale = 1;
   if (mouseX > width / 2 - 52 && mouseX < width / 2 + 52 && mouseY > height / 2 - 31 + 220 && mouseY < height / 2 + 5 + 220) {
@@ -629,5 +630,5 @@ void info_3() {
   } else {
     buttonScale = 1.0;
   }
-  image(ok, width / 2 - 52, height / 2 - 31 + 220, 104 * buttonScale, 36 * buttonScale);
+  image(ok, width / 2 - 52, height / 2 - 30 + 220, 104 * buttonScale, 36 * buttonScale);
 }
