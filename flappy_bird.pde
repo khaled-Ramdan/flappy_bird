@@ -21,7 +21,7 @@ float xLand1, xLand2;
 int whichBackground;
 
 // score
-int score, level, bestScore;
+int score = 20, level, bestScore = 20;
 
 // gameOver
 PImage gameOver, scoreBoard, restart, exit, New, silver_medal, gold_medal, platinum_medal, deadBird;
@@ -29,10 +29,10 @@ PImage gameOver, scoreBoard, restart, exit, New, silver_medal, gold_medal, plati
 // pipes
 PImage pipe, pipe_inverse;
 int speed, speed2, counter, frameCountAtLastObject, interval;
-int[] pipeX = { 100 + 500,  500 + 100, 500 + 300, 500 +  300, 500 + 500, 500 + 500 };
-int[] pipeS = { 1, 0, 1, 0, 1, 0 };
-int[] is_counted = {0,0,0,0,0,0};
-float[] pipeScaleY = { 1,1 , 0.5, 1.5, 0.3, 1.7 }; // 4.4  => empty [1, 2.4] 
+int[] pipeX = { 100 + 500,  500 + 100, 500 + 300, 500 +  300, 500 + 500, 500 + 500, 500 + 700, 500 + 700 };
+int[] pipeS = { 1, 0, 1, 0, 1, 0 , 1, 0};
+int[] is_counted = {0,0,0,0,0,0,0,0};
+float[] pipeScaleY = { 1,1 , 0.5, 1.5, 0.3, 1.7, .4, 1.6 }; // 4.4  => empty [1, 2.4] 
 
 // bird
 PImage[] birdFrame = new PImage[3];
@@ -55,7 +55,7 @@ Minim minim;
 AudioPlayer [] sound = new AudioPlayer[5]; // 0 = die, 1 = hit, 2 = point, 3 = swooshing, 4 = wing
 
 void setup() {
-  size(394, 700);
+  size(694, 700);
   noStroke();
   
   // music
@@ -191,6 +191,14 @@ void draw() {
 }
 
 void init() {
+  int[] pipeX_init = { 100 + 500,  500 + 100, 500 + 300, 500 +  300, 500 + 500, 500 + 500, 500 + 700, 500 + 700 };
+  int[] pipeS_init = { 1, 0, 1, 0, 1, 0 , 1, 0};
+  int[] is_counted_init = {0,0,0,0,0,0,0,0};
+  float[] pipeScaleY_init = { 1,1 , 0.5, 1.5, 0.3, 1.7, .4, 1.6 }; // 4.4  => empty [1, 2.4] 
+  pipeX = pipeX_init;
+  pipeS = pipeS_init;
+  is_counted = is_counted_init;
+  pipeScaleY = pipeScaleY_init;
   xLand1 = 0;
   xLand2 = width;
   started = false;
@@ -252,8 +260,8 @@ void draw_score(int posx, int posy, int number, boolean sOb){
 }
 
 void getStarted() {
-   image(getReady, width / 2 - 100, height / 2 - 100);
-   image(taptap, width / 2 - 65, height / 2 - 25);
+   image(getReady, width / 2 - 100, height / 2 - 120);
+   image(taptap, width / 2 - 65, height / 2 - 35);
    gravity = 0.4;
    speedY = 0;
 }
@@ -317,14 +325,14 @@ void drawBackground3() {
   if (xLand1 <= -width)xLand1 = width;
   if (xLand2 <= -width)xLand2 = width;
 }
-
+///................dfmsgpmosfvfb,fpv,fvwf 3333..................
 void pipes() {
   for(int i = 0; i < pipeX.length; i++){
     if(pipeS[i] == 0)
       draw_pipe(pipe_inverse, pipeX[i], 0, 3, pipeScaleY[i], false);
-    else 
-      draw_pipe(pipe, pipeX[i], height - pipe.height * pipeScaleY[i], 3, pipeScaleY[i], true);
-        
+    else {
+      draw_pipe(pipe, pipeX[i], height - pipe.height * pipeScaleY[i] - 75, 3, pipeScaleY[i],false);
+  }
     pipeX[i] -= speed;
     
     if(i%2 == 0 && pipeX[i] <= 5 && is_counted[i] == 0){
@@ -350,6 +358,7 @@ void pipes() {
 
 void draw_pipe(PImage pipe, int x, float y, float scaleX, float scaleY, boolean uOd){
    pushMatrix();
+
    if (uOd == false)translate(x, y);
    else translate(x, y - 75);
    scale(scaleX, scaleY);
@@ -366,10 +375,10 @@ void collision(int scaleX) {
     hit = false;
   }
   
-  for(int i = 0; i < pipeX.length; ++i) {
-    if(birdX + 15 >= pipeX[i] &&
+  for(int i = 0; i < 8; ++i) {
+    if(birdX + 25 >= pipeX[i] &&
        birdX <= pipeX[i] + pipeW  &&
-       ((birdY <= pipe.height * pipeScaleY[i] && pipeS[i] == 0) || (birdY >= height - pipe.height * pipeScaleY[i] && pipeS[i] == 1))) {
+       ((birdY <= pipe.height * pipeScaleY[i] && pipeS[i] == 0) || (birdY >= height - pipe.height * pipeScaleY[i] - 75 * (i%2 == 0?1:0) && pipeS[i] == 1))) {
           dead = true;
           hit = true;
           break;
@@ -403,7 +412,7 @@ void mousePressed() {
     }
   }
   else if (where == 0) {
-    if (mouseX > width / 2 - 60 && mouseX < width / 2 + 50 && mouseY > height / 2 - 31 + 220 && mouseY < height / 2 + 5 + 220) {
+    if (mouseX > width / 2 - 60 && mouseX < width / 2 + 50 && mouseY > height / 2 - 31 + 190 && mouseY < height / 2 + 5 + 190) {
       where = 1;
       play_sound(3);
     }
@@ -451,7 +460,7 @@ void mousePressed() {
     }
   }
   else {
-    if (mouseX > width / 2 - 52 && mouseX < width / 2 + 52 && mouseY > height / 2 - 31 + 220 && mouseY < height / 2 + 5 + 220) {
+    if (mouseX > width / 2 - 52 && mouseX < width / 2 + 52 && mouseY > height / 2 - 31 + 190 && mouseY < height / 2 + 5 + 190) {
       where = 0;
       play_sound(3);
     }
@@ -459,18 +468,18 @@ void mousePressed() {
 }
 
 void startGame() {
-  image(flappyBirdFont, (width / 2 - 90) - 20, (height / 2 - 100 + cnt));
-  image(birdFrame[currentFrame], (width / 2 + 100) - 20, (height / 2 - 93 + cnt));
+  image(flappyBirdFont, (width / 2 - 90) - 30, (height / 2 - 100 + cnt));
+  image(birdFrame[currentFrame], (width / 2 + 100) - 10, (height / 2 - 93 + cnt));
   if(frameCount % 7 == 0) {
     currentFrame = (currentFrame + 1) % birdFrame.length;
   }
   float playButtonScale = 1, infoButtonScale = 1;
-  if (mouseX > width / 2 - 60 && mouseX < width / 2 + 50 && mouseY > height / 2 - 31 + 220 && mouseY < height / 2 + 5 + 220){
+  if (mouseX > width / 2 - 60 && mouseX < width / 2 + 50 && mouseY > height / 2 - 31 + 190 && mouseY < height / 2 + 5 + 190){
     playButtonScale = 1.05;  // Increase the scale when hovering
   } else {
     playButtonScale = 1.0;  // Reset the scale when not hovering
   }
-  image(play, width / 2 - 52, height / 2 - 31 + 220, 104 * playButtonScale, 36 * playButtonScale);
+  image(play, width / 2 - 52, height / 2 - 31 + 190, 104 * playButtonScale, 36 * playButtonScale);
   if (mouseX >= width - 70 && mouseY >= 10 && mouseY <= 70){
     infoButtonScale = 1.05;  // Increase the scale when hovering
   } else {
@@ -486,8 +495,8 @@ void gameOver() {
   speed = 0;
   speedY = 15;
   
-  image(gameOver, width / 2 - 96, height / 2 - 200);
-  image(scoreBoard, width / 2 - 150, height / 2 - 100);
+  image(gameOver, width / 2 - 110, height / 2 - 200);
+  image(scoreBoard, width / 2 - 185, height / 2 - 100);
   float buttonScaleR = 1;
   if (mouseX > width / 2 - 125 && mouseX < width / 2 - 125 + 102 && mouseY > height / 2 + 110 && mouseY < height / 2 + 110 + 39) {
     buttonScaleR = 1.05;
@@ -498,17 +507,17 @@ void gameOver() {
     buttonScaleE = 1.05;
    }
   image(exit, width / 2 + 10, height / 2 + 110, 121 * buttonScaleE, 39 * buttonScaleE);
-  if (score > bestScore)image(New, width / 2 + 35, height / 2 - 20);
-  draw_score(width / 2 + 100, height / 2 - 37, score, false);
-  draw_score(width / 2 + 100, height / 2 + 20, max(bestScore, score), false);
+  if (score > bestScore)image(New, width / 2 + 40, height / 2 - 4);
+  draw_score(width / 2 + 120, height / 2 - 24, score, false);
+  draw_score(width / 2 + 120, height / 2 + 44, max(bestScore, score), false);
   if (score > 10 && score <= 20) {
-    image(platinum_medal, width / 2-114, height / 2 - 42);
+    image(platinum_medal, width / 2-142, height / 2 - 28);
   }
   else if (score > 20 && score <= 30) {
-    image(silver_medal, width / 2-114, height / 2 - 42);
+    image(silver_medal, width / 2-140, height / 2 - 30);
   }
   else if (score > 30){
-    image(gold_medal, width / 2-114, height / 2 - 42);
+   image(gold_medal, width / 2-140, height / 2 - 30);
   }
 }
 
